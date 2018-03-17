@@ -1,21 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
     This module get name and album name and artists of track from
     one or more  spotify's playlist of user and stored in csv or txt
     file
+
+    TODO: problem in show utf8 in select list
+    TODO: show all list without check for owner or two list
 """
-# -*- coding: utf-8 -*-
-import sys
+
 import getopt
+import sys
+
 import spotipy
 import spotipy.util as util
 from pick import pick
 from prettytable import PrettyTable
-from user_data import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI
-from user_data import USERNAME, SCOPE
 
-# FIXME:
-# NOTE:
-# TODO:
+from user_data import (SCOPE, SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,
+                       SPOTIPY_REDIRECT_URI, USERNAME)
 
 
 def make_choose_list(username, playlists):
@@ -44,9 +48,11 @@ def show_choice_list(dictionary_of_playlist, list_title):
         get dictionary_of_playlist for detect key or keys of playlists selected
         return keys or key of selected playlist
     """
-    title = 'Please choose your playlist (press SPACE to mark, ENTER to continue): '
+    title = """Please choose your playlist
+    (press SPACE to mark, ENTER to continue): """
     selected = pick(list_title, title, multi_select=True, min_selection_count=1)
     list_selected = []
+    print selected
     for name_selected, key in selected:
         for playlist_id, name in dictionary_of_playlist.iteritems():
             if name_selected == name:
@@ -72,7 +78,8 @@ def write_in_csv(results, file_name):
             artists_name = ""
             for artist in artists:
                 artists_name += artist['name'].encode('utf-8') + '/'
-            csv_output.write(track_name.encode('utf-8') + "," + album_name.encode('utf-8') +
+            csv_output.write(track_name.encode('utf-8') + "," +
+                             album_name.encode('utf-8') +
                              "," + artists_name[:-1] + "\n")
             artists_name = ''
 
@@ -99,8 +106,10 @@ def write_in_table(results, file_name):
         artists_name = ""
         for artist in artists:
             artists_name += artist['name'].encode('utf-8') + '/'
-        table.add_row([index, track['track']['name'].encode('utf-8'),
-                       track['track']['album']['name'].encode('utf-8'), artists_name[:-1]])
+        table.add_row([index,
+                       track['track']['name'].encode('utf-8'),
+                       track['track']['album']['name'].encode('utf-8'),
+                       artists_name[:-1]])
         index += 1
     with open(file_name+".txt", 'wb') as table_file:
         table_file.write(str(table))
@@ -158,7 +167,6 @@ def main(argv):
         elif opt in ("-o", "--output-name"):
             output_name = arg
     create_file_list(type_output, output_name)
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])
